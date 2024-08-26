@@ -1,21 +1,43 @@
-from abc import ABC, abstractmethod
 
-class AbstractDataSource(ABC):
+import os
+
+from lib.classes.AbstractDataSource import AbstractDataSource
+
+
+class FilesSources(AbstractDataSource):
     def __init__(self):
-        pass
-    
-    @abstractmethod
-    def start(self):
-        raise NotImplementedError('Método não implementado')
-    
-    @abstractmethod
+        self.folder_path = None
+        self.previous_files = []
+        self.start()
+
+    def create_path(self):
+        current_directory = os.getcwd()
+        self.folder_path = os.path.join(current_directory, 'data', 'extension_files')
+        if not os.path.exists(self.folder_path):
+            os.makedirs(self.folder_path)
+
+    def check_for_new_files(self):
+        current_files = os.listdir(self.folder_path)
+        new_files = [file for file in current_files if file not in self.previous_files]
+
+        if new_files:
+            print("New files detected:", new_files)
+            # Update the list of previous files
+            self.previous_files = current_files
+        else:
+            print("No new files detected.")
+
+    def show_files(self):
+        print(self.previous_files)
+
     def get_data(self):
-        raise NotImplementedError('Método não implementado')
-    
-    @abstractmethod
+        pass
+
     def transform_data_to_df(self):
-        raise NotImplementedError('Método não implementado')
-    
-    @abstractmethod
+        pass
+
     def save_data(self):
-        raise NotImplementedError('Método não implementado')
+        pass
+
+    def start(self):
+        self.create_path()
